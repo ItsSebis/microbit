@@ -41,6 +41,16 @@ input.onButtonPressed(Button.A, function () {
         channel += -1
     }
 })
+radio.onReceivedString(function (receivedString) {
+    if (!(settingUp) && radio.receivedPacket(RadioPacketProperty.SerialNumber) == enemy) {
+        enemyResult = receivedString
+    }
+})
+input.onButtonPressed(Button.B, function () {
+    if (!(channel == 255) && settingUp) {
+        channel += 1
+    }
+})
 input.onGesture(Gesture.Shake, function () {
     if (!(settingUp) && Connected) {
         basic.showIcon(IconNames.Yes)
@@ -80,19 +90,9 @@ input.onGesture(Gesture.Shake, function () {
                 . # # # .
                 `)
         }
-        basic.pause(5000)
+        basic.pause(2000)
         calculateResult()
         Reset()
-    }
-})
-radio.onReceivedString(function (receivedString) {
-    if (!(settingUp) && radio.receivedPacket(RadioPacketProperty.SerialNumber) == enemy) {
-        enemyResult = receivedString
-    }
-})
-input.onButtonPressed(Button.B, function () {
-    if (!(channel == 255) && settingUp) {
-        channel += 1
     }
 })
 function Lord () {
@@ -103,7 +103,6 @@ function Lord () {
         . . . . .
         . . . . .
         `)
-    control.waitMicros(400)
     basic.showLeds(`
         . . . . .
         . . # . .
@@ -111,7 +110,6 @@ function Lord () {
         . . . . .
         . . . . .
         `)
-    control.waitMicros(400)
     basic.showLeds(`
         . . . . .
         . . . . #
@@ -119,7 +117,6 @@ function Lord () {
         . . . . .
         . . . . .
         `)
-    control.waitMicros(400)
 }
 function Reset () {
     Connected = false

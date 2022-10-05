@@ -1,10 +1,13 @@
 radio.onReceivedNumber(function (receivedNumber) {
-    if (receivedNumber == 787) {
-        Connected = true
+    if (!(settingUp)) {
+        if (receivedNumber == 787) {
+            enemy = radio.receivedPacket(RadioPacketProperty.SerialNumber)
+            Connected = true
+        }
     }
 })
 function calculateResult () {
-    if (Opponent == "Schere") {
+    if (enemyResult == "Schere") {
         if (Random == 1) {
             basic.showIcon(IconNames.Asleep)
         } else if (Random == 2) {
@@ -12,7 +15,7 @@ function calculateResult () {
         } else {
             basic.showIcon(IconNames.Sad)
         }
-    } else if (Opponent == "Stein") {
+    } else if (enemyResult == "Stein") {
         if (Random == 1) {
             basic.showIcon(IconNames.Sad)
         } else if (Random == 2) {
@@ -20,7 +23,7 @@ function calculateResult () {
         } else {
             basic.showIcon(IconNames.Happy)
         }
-    } else if (Opponent == "Papier") {
+    } else if (enemyResult == "Papier") {
         if (Random == 1) {
             basic.showIcon(IconNames.Happy)
         } else if (Random == 2) {
@@ -33,49 +36,64 @@ function calculateResult () {
     }
     basic.pause(5000)
 }
-radio.onReceivedString(function (receivedString) {
-    Opponent = receivedString
+input.onButtonPressed(Button.A, function () {
+    if (!(channel == 0) && settingUp) {
+        channel += -1
+    }
 })
 input.onGesture(Gesture.Shake, function () {
-    Random = randint(1, 3)
-    if (Random == 1) {
-        radio.sendString("Schere")
-    } else if (Random == 2) {
-        radio.sendString("Stein")
-    } else {
-        radio.sendString("Papier")
+    if (!(settingUp) && Connected) {
+        basic.showIcon(IconNames.Yes)
+        Random = randint(1, 3)
+        if (Random == 1) {
+            radio.sendString("Schere")
+        } else if (Random == 2) {
+            radio.sendString("Stein")
+        } else {
+            radio.sendString("Papier")
+        }
+        while (enemyResult == "") {
+            Lord()
+        }
+        if (Random == 1) {
+            basic.showLeds(`
+                # . . . #
+                . # . # .
+                . . # . .
+                # # . # #
+                # # . # #
+                `)
+        } else if (Random == 2) {
+            basic.showLeds(`
+                . # # # .
+                # # # # #
+                # # # # #
+                # # # # #
+                . # # # .
+                `)
+        } else {
+            basic.showLeds(`
+                . . . . .
+                . # # # .
+                . # # # .
+                . # # # .
+                . # # # .
+                `)
+        }
+        basic.pause(5000)
+        calculateResult()
+        Reset()
     }
-    while (Opponent == "") {
-        Lord()
+})
+radio.onReceivedString(function (receivedString) {
+    if (!(settingUp) && radio.receivedPacket(RadioPacketProperty.SerialNumber) == enemy) {
+        enemyResult = receivedString
     }
-    if (Random == 1) {
-        basic.showLeds(`
-            # . . . #
-            . # . # .
-            . . # . .
-            # # . # #
-            # # . # #
-            `)
-    } else if (Random == 2) {
-        basic.showLeds(`
-            . # # # .
-            # # # # #
-            # # # # #
-            # # # # #
-            . # # # .
-            `)
-    } else {
-        basic.showLeds(`
-            . . . . .
-            . # # # .
-            . # # # .
-            . # # # .
-            . # # # .
-            `)
+})
+input.onButtonPressed(Button.B, function () {
+    if (!(channel == 255) && settingUp) {
+        channel += 1
     }
-    basic.pause(5000)
-    calculateResult()
-    Reset()
 })
 function Lord () {
     basic.showLeds(`
@@ -105,15 +123,9 @@ function Lord () {
 }
 function Reset () {
     Connected = false
-    Opponent = ""
+    enemyResult = ""
     while (!(Connected)) {
-        basic.showLeds(`
-            . # # # .
-            # # . # #
-            # . # . #
-            # # . # #
-            . # # # .
-            `)
+        basic.showNumber(channel)
         radio.sendNumber(787)
     }
     basic.showLeds(`
@@ -125,7 +137,16 @@ function Reset () {
         `)
 }
 let Random = 0
-let Opponent = ""
+let enemyResult = ""
 let Connected = false
-radio.setGroup(187)
+let enemy = 0
+let channel = 0
+let settingUp = false
+settingUp = true
+channel = 0
+while (!(input.buttonIsPressed(Button.AB))) {
+    basic.showNumber(channel)
+}
+radio.setGroup(channel)
+settingUp = false
 Reset()

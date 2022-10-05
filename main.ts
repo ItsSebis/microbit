@@ -3,6 +3,39 @@ radio.onReceivedNumber(function (receivedNumber) {
         Connected = true
     }
 })
+function calculateResult () {
+    if (Opponent == "Schere") {
+        if (Random == 1) {
+            basic.showIcon(IconNames.Asleep)
+        } else if (Random == 2) {
+            basic.showIcon(IconNames.Happy)
+        } else {
+            basic.showIcon(IconNames.Sad)
+        }
+    } else if (Opponent == "Stein") {
+        if (Random == 1) {
+            basic.showIcon(IconNames.Sad)
+        } else if (Random == 2) {
+            basic.showIcon(IconNames.Asleep)
+        } else {
+            basic.showIcon(IconNames.Happy)
+        }
+    } else if (Opponent == "Papier") {
+        if (Random == 1) {
+            basic.showIcon(IconNames.Happy)
+        } else if (Random == 2) {
+            basic.showIcon(IconNames.Sad)
+        } else {
+            basic.showIcon(IconNames.Asleep)
+        }
+    } else {
+        basic.showIcon(IconNames.Confused)
+    }
+    basic.pause(5000)
+}
+radio.onReceivedString(function (receivedString) {
+    Opponent = receivedString
+})
 input.onGesture(Gesture.Shake, function () {
     Random = randint(1, 3)
     if (Random == 1) {
@@ -41,37 +74,8 @@ input.onGesture(Gesture.Shake, function () {
             `)
     }
     basic.pause(5000)
-    if (Opponent == "Schere") {
-        if (Random == 1) {
-            basic.showString("Unentschieden")
-        } else if (Random == 2) {
-            basic.showString("Gewonnen")
-        } else {
-            basic.showString("Verloren")
-        }
-    } else if (Opponent == "Stein") {
-        if (Random == 1) {
-            basic.showString("Verloren")
-        } else if (Random == 2) {
-            basic.showString("Unentschieden")
-        } else {
-            basic.showString("Gewonnen")
-        }
-    } else if (Opponent == "Papier") {
-        if (Random == 1) {
-            basic.showString("Gewonnen")
-        } else if (Random == 2) {
-            basic.showString("Verloren")
-        } else {
-            basic.showString("Unentschieden")
-        }
-    } else {
-        basic.showString("Input Fehler")
-    }
+    calculateResult()
     Reset()
-})
-radio.onReceivedString(function (receivedString) {
-    Opponent = receivedString
 })
 function Lord () {
     basic.showLeds(`
@@ -120,8 +124,8 @@ function Reset () {
         . . # . .
         `)
 }
-let Opponent = ""
 let Random = 0
+let Opponent = ""
 let Connected = false
 radio.setGroup(187)
 Reset()

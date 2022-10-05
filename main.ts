@@ -3,9 +3,6 @@ radio.onReceivedNumber(function (receivedNumber) {
         Connected = true
     }
 })
-radio.onReceivedString(function (receivedString) {
-    Opponent = receivedString
-})
 input.onGesture(Gesture.Shake, function () {
     Random = randint(1, 3)
     if (Random == 1) {
@@ -73,15 +70,10 @@ input.onGesture(Gesture.Shake, function () {
     }
     Reset()
 })
+radio.onReceivedString(function (receivedString) {
+    Opponent = receivedString
+})
 function Lord () {
-    basic.showLeds(`
-        . . . . .
-        . . . . .
-        # . # . #
-        . . . . .
-        . . . . .
-        `)
-    control.waitMicros(387)
     basic.showLeds(`
         . . . . .
         # . . . .
@@ -89,7 +81,7 @@ function Lord () {
         . . . . .
         . . . . .
         `)
-    control.waitMicros(339)
+    control.waitMicros(400)
     basic.showLeds(`
         . . . . .
         . . # . .
@@ -97,7 +89,7 @@ function Lord () {
         . . . . .
         . . . . .
         `)
-    control.waitMicros(387)
+    control.waitMicros(400)
     basic.showLeds(`
         . . . . .
         . . . . #
@@ -105,7 +97,7 @@ function Lord () {
         . . . . .
         . . . . .
         `)
-    control.waitMicros(339)
+    control.waitMicros(400)
 }
 function Reset () {
     Connected = false
@@ -128,8 +120,8 @@ function Reset () {
         . . # . .
         `)
 }
-let Random = 0
 let Opponent = ""
+let Random = 0
 let Connected = false
 radio.setGroup(187)
 Reset()

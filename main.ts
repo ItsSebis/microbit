@@ -58,11 +58,11 @@ input.onGesture(Gesture.Shake, function () {
             `)
     } else if (Random == 2) {
         basic.showLeds(`
-            . . # . .
             . # # # .
             # # # # #
+            # # # # #
+            # # # # #
             . # # # .
-            . . # . .
             `)
     } else {
         basic.showLeds(`

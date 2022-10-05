@@ -143,10 +143,11 @@ let enemy = 0
 let channel = 0
 let settingUp = false
 settingUp = true
-channel = 0
+channel = 127
 while (!(input.buttonIsPressed(Button.AB))) {
     basic.showNumber(channel)
 }
+basic.showIcon(IconNames.Yes)
 radio.setGroup(channel)
 settingUp = false
 Reset()

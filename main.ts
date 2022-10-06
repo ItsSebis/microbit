@@ -112,7 +112,7 @@ function Lord () {
         . . . . .
         `)
     basic.showLeds(`
-        . . . . .
+        . . . # .
         . . # . .
         # . . . #
         . . . . .
@@ -133,7 +133,7 @@ function Reset () {
         radio.sendNumber(787)
     }
     if (games != 0) {
-        basic.showString("S:" + convertToText(pSelf) + "|" + "E:" + convertToText(pSelf))
+        basic.showString("S:" + convertToText(pSelf) + "|" + "E:" + convertToText(pEnemy))
     }
     basic.showLeds(`
         . . # . .
@@ -147,6 +147,7 @@ let Random = 0
 let enemyResult = ""
 let enemy = 0
 let pSelf = 0
+let pEnemy = 0
 let games = 0
 let Connected = false
 let channel = 0
@@ -161,7 +162,7 @@ basic.showIcon(IconNames.Yes)
 radio.setGroup(channel)
 Connected = false
 games = 0
-let pEnemy = 0
+pEnemy = 0
 pSelf = 0
 settingUp = false
 Reset()

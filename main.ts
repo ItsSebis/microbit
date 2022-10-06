@@ -144,6 +144,7 @@ channel = 127
 while (!(input.buttonIsPressed(Button.AB))) {
     basic.showNumber(channel)
 }
+music.playSoundEffect(music.createSoundEffect(WaveShape.Sine, 2162, 3098, 255, 255, 50, SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic), SoundExpressionPlayMode.UntilDone)
 basic.showIcon(IconNames.Yes)
 radio.setGroup(channel)
 settingUp = false

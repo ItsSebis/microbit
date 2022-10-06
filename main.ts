@@ -43,7 +43,6 @@ function calculateResult () {
     } else {
         basic.showIcon(IconNames.Confused)
     }
-    basic.pause(5000)
 }
 input.onButtonPressed(Button.A, function () {
     if (!(channel == 0) && settingUp) {
@@ -99,7 +98,7 @@ input.onGesture(Gesture.Shake, function () {
                 . # # # .
                 `)
         }
-        basic.pause(2000)
+        basic.pause(500)
         calculateResult()
         Reset()
     }
@@ -134,7 +133,7 @@ function Reset () {
         radio.sendNumber(787)
     }
     if (games != 0) {
-        basic.showString("S: " + convertToText(pSelf) + " | " + "E: " + convertToText(pSelf))
+        basic.showString("S:" + convertToText(pSelf) + "|" + "E:" + convertToText(pSelf))
     }
     basic.showLeds(`
         . . # . .

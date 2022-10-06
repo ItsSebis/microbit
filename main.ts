@@ -7,30 +7,39 @@ radio.onReceivedNumber(function (receivedNumber) {
     }
 })
 function calculateResult () {
-    if (enemyResult == "Schere") {
+    if (enemyResult == "schere") {
         if (Random == 1) {
             basic.showIcon(IconNames.Asleep)
         } else if (Random == 2) {
             basic.showIcon(IconNames.Happy)
+            pSelf += 1
         } else {
             basic.showIcon(IconNames.Sad)
+            pEnemy += 1
         }
-    } else if (enemyResult == "Stein") {
+        games += 1
+    } else if (enemyResult == "stein") {
         if (Random == 1) {
             basic.showIcon(IconNames.Sad)
+            pEnemy += 1
         } else if (Random == 2) {
             basic.showIcon(IconNames.Asleep)
         } else {
             basic.showIcon(IconNames.Happy)
+            pSelf += 1
         }
-    } else if (enemyResult == "Papier") {
+        games += 1
+    } else if (enemyResult == "papier") {
         if (Random == 1) {
             basic.showIcon(IconNames.Happy)
+            pSelf += 1
         } else if (Random == 2) {
             basic.showIcon(IconNames.Sad)
+            pEnemy += 1
         } else {
             basic.showIcon(IconNames.Asleep)
         }
+        games += 1
     } else {
         basic.showIcon(IconNames.Confused)
     }
@@ -56,11 +65,11 @@ input.onGesture(Gesture.Shake, function () {
         basic.showIcon(IconNames.Yes)
         Random = randint(1, 3)
         if (Random == 1) {
-            radio.sendString("Schere")
+            radio.sendString("schere")
         } else if (Random == 2) {
-            radio.sendString("Stein")
+            radio.sendString("stein")
         } else {
-            radio.sendString("Papier")
+            radio.sendString("papier")
         }
         while (enemyResult == "") {
             Lord()
@@ -119,11 +128,13 @@ function Lord () {
         `)
 }
 function Reset () {
-    Connected = false
     enemyResult = ""
     while (!(Connected)) {
         basic.showNumber(channel)
         radio.sendNumber(787)
+    }
+    if (games != 0) {
+        basic.showString("S: " + convertToText(pSelf) + " | " + "E: " + convertToText(pSelf))
     }
     basic.showLeds(`
         . . # . .
@@ -135,8 +146,10 @@ function Reset () {
 }
 let Random = 0
 let enemyResult = ""
-let Connected = false
 let enemy = 0
+let pSelf = 0
+let games = 0
+let Connected = false
 let channel = 0
 let settingUp = false
 settingUp = true
@@ -147,5 +160,9 @@ while (!(input.buttonIsPressed(Button.AB))) {
 music.playSoundEffect(music.createSoundEffect(WaveShape.Sine, 2162, 3098, 255, 255, 50, SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic), SoundExpressionPlayMode.UntilDone)
 basic.showIcon(IconNames.Yes)
 radio.setGroup(channel)
+Connected = false
+games = 0
+let pEnemy = 0
+pSelf = 0
 settingUp = false
 Reset()

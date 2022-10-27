@@ -1,9 +1,7 @@
 radio.onReceivedNumber(function (receivedNumber) {
-    if (!(settingUp)) {
-        if (receivedNumber == 787) {
-            enemy = radio.receivedPacket(RadioPacketProperty.SerialNumber)
-            Connected = true
-        }
+    if (receivedNumber == 787 && !(Connected)) {
+        enemy = radio.receivedPacket(RadioPacketProperty.SerialNumber)
+        Connected = true
     }
 })
 function calculateResult () {
@@ -47,20 +45,14 @@ function calculateResult () {
 input.onButtonPressed(Button.A, function () {
     if (!(channel == 0) && settingUp) {
         channel += -1
-    }
-})
-radio.onReceivedString(function (receivedString) {
-    if (!(settingUp) && radio.receivedPacket(RadioPacketProperty.SerialNumber) == enemy) {
-        enemyResult = receivedString
-    }
-})
-input.onButtonPressed(Button.B, function () {
-    if (!(channel == 255) && settingUp) {
-        channel += 1
+        Connected = false
+        radio.setGroup(channel)
+        basic.showNumber(channel)
     }
 })
 input.onGesture(Gesture.Shake, function () {
-    if (!(settingUp) && Connected) {
+    if (!(settingUp) && Connected && !(gaming)) {
+        gaming = true
         basic.showIcon(IconNames.Yes)
         Random = randint(1, 3)
         if (Random == 1) {
@@ -103,6 +95,53 @@ input.onGesture(Gesture.Shake, function () {
         Reset()
     }
 })
+function newGame () {
+    gaming = false
+    Connected = false
+    settingUp = true
+    enemy = 0
+    channel = 127
+    radio.setGroup(channel)
+    while (!(Connected)) {
+        basic.showLeds(`
+            . . . . .
+            . . # . .
+            . # . # .
+            . . # . .
+            . . . . .
+            `)
+        radio.sendNumber(787)
+    }
+    games = 0
+    pEnemy = 0
+    pSelf = 0
+    settingUp = false
+    basic.showLeds(`
+        . . # . .
+        . # . # .
+        # . . . #
+        . # . # .
+        . . # . .
+        `)
+    Reset()
+}
+input.onButtonPressed(Button.AB, function () {
+    if (!(settingUp)) {
+        newGame()
+    }
+})
+radio.onReceivedString(function (receivedString) {
+    if (!(settingUp) && radio.receivedPacket(RadioPacketProperty.SerialNumber) == enemy) {
+        enemyResult = receivedString
+    }
+})
+input.onButtonPressed(Button.B, function () {
+    if (!(channel == 255) && settingUp) {
+        channel += 1
+        radio.setGroup(channel)
+        basic.showNumber(channel)
+    }
+})
 function Lord () {
     basic.showLeds(`
         . . . . .
@@ -128,10 +167,6 @@ function Lord () {
 }
 function Reset () {
     enemyResult = ""
-    while (!(Connected)) {
-        basic.showNumber(channel)
-        radio.sendNumber(787)
-    }
     if (games != 0) {
         basic.clearScreen()
         basic.showLeds(`
@@ -141,13 +176,38 @@ function Reset () {
             . . # . .
             . . # . .
             `)
-        for (let index = 0; index <= pSelf - 1; index++) {
-            led.plot(0, index)
+        if (pSelf <= 5) {
+            for (let index = 0; index <= pSelf - 1; index++) {
+                led.plot(0, index)
+            }
+        } else {
+            for (let index = 0; index <= 4; index++) {
+                led.plot(0, index)
+            }
+            for (let index = 0; index <= pSelf - 6; index++) {
+                led.plot(1, index)
+            }
         }
-        for (let index = 0; index <= pEnemy - 1; index++) {
-            led.plot(3, index)
+        if (pEnemy <= 5) {
+            for (let index = 0; index <= pEnemy - 1; index++) {
+                led.plot(3, index)
+            }
+        } else {
+            for (let index = 0; index <= 4; index++) {
+                led.plot(3, index)
+            }
+            for (let index = 0; index <= pEnemy - 6; index++) {
+                led.plot(4, index)
+            }
         }
         basic.pause(2000)
+        if (pSelf == 10) {
+            basic.showString("Gewonnen!")
+            newGame()
+        } else if (pEnemy == 10) {
+            basic.showString("Verloren!")
+            newGame()
+        }
     }
     basic.showLeds(`
         . . # . .
@@ -156,27 +216,16 @@ function Reset () {
         . # # # .
         . . # . .
         `)
+    gaming = false
 }
+let gaming = false
+let settingUp = false
+let channel = 0
+let games = 0
+let pEnemy = 0
+let pSelf = 0
 let Random = 0
 let enemyResult = ""
 let enemy = 0
-let pSelf = 0
-let pEnemy = 0
-let games = 0
 let Connected = false
-let channel = 0
-let settingUp = false
-settingUp = true
-channel = 127
-while (!(input.buttonIsPressed(Button.AB))) {
-    basic.showNumber(channel)
-}
-music.playSoundEffect(music.createSoundEffect(WaveShape.Sine, 2162, 3098, 255, 255, 50, SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic), SoundExpressionPlayMode.UntilDone)
-basic.showIcon(IconNames.Yes)
-radio.setGroup(channel)
-Connected = false
-games = 0
-pEnemy = 0
-pSelf = 0
-settingUp = false
-Reset()
+newGame()

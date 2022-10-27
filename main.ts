@@ -112,7 +112,7 @@ function Lord () {
         . . . . .
         `)
     basic.showLeds(`
-        . . . # .
+        . . . . .
         . . # . .
         # . . . #
         . . . . .
@@ -133,7 +133,21 @@ function Reset () {
         radio.sendNumber(787)
     }
     if (games != 0) {
-        basic.showString("S:" + convertToText(pSelf) + "|" + "E:" + convertToText(pEnemy))
+        basic.clearScreen()
+        basic.showLeds(`
+            . . # . .
+            . . # . .
+            . . # . .
+            . . # . .
+            . . # . .
+            `)
+        for (let index = 0; index <= pSelf - 1; index++) {
+            led.plot(0, index)
+        }
+        for (let index = 0; index <= pEnemy - 1; index++) {
+            led.plot(3, index)
+        }
+        basic.pause(2000)
     }
     basic.showLeds(`
         . . # . .
